@@ -75,7 +75,8 @@ selected_model = st.sidebar.selectbox(
         "o1-mini: 0.0075/0.03\n"
         "o3-mini: 0.0075/0.03\n"
         "deepseek-chat: 0.015/0.06\n"
-        "deepseek-reasoner: 0.03/0.12"
+        "deepseek-reasoner: 0.03/0.12\n\n"
+        "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing"
     )
 )
 
