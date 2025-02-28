@@ -49,6 +49,8 @@ Translation Agent 是一個基於大型語言模型的翻譯工具，採用獨�
   * DeepSeek-Chat: US$0.015/0.06 per 1M tokens
   * DeepSeek-Reasoner: US$0.03/0.12 per 1M tokens
 
+OpenAI 官方定價參考：[https://platform.openai.com/docs/pricing](https://platform.openai.com/docs/pricing)
+
 ## 使用方法
 
 1. 在側邊欄選擇翻譯模型
