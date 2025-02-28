@@ -23,7 +23,6 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 nltk.download('punkt', quiet=True)
-
 # Set page config
 st.set_page_config(page_title="Translation Agent", layout="wide")
 
@@ -630,12 +629,11 @@ if 'last_ping' in st.session_state:
     st.sidebar.text(f"Last active: {time.ctime(st.session_state['last_ping'])}")
 
 if __name__ == "__main__":
-    # 使用新的 st.query_params API
+    # 使用 query_params 替代 experimental_get_query_params
     if "heartbeat" in st.query_params:
-        st.json(heartbeat())
-        st.stop()
-    
-    main()  # 原有的主程序
+        st.write(heartbeat())
+    else:
+        main()
 
 
 #在最後嵌入 JavaScript SDK 代碼
