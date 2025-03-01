@@ -615,7 +615,7 @@ def keep_alive():
             response = requests.get("https://translationagent.streamlit.app")
             if 'last_ping' in st.session_state:
                 st.session_state['last_ping'] = time.time()
-            time.sleep(1200)  # 每20分鐘喚醒一次
+            time.sleep(86400)  # 每24小時喚醒一次
         except Exception as e:
             print(f"Keep-alive error: {e}")
             time.sleep(60)  # 如果出錯，1分鐘後重試
