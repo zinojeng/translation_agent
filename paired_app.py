@@ -9,11 +9,11 @@ import nltk
 import ssl
 import diff_match_patch as dmp_module
 from typing import List, Tuple
-import requests  # 添加這行
+import requests
 from datetime import datetime
 import time
 import threading
-import streamlit.runtime.scriptrunner.script_run_context as script_run_context
+from streamlit.runtime.scriptrunner import get_script_run_ctx
 
 # SSL and NLTK setup
 try:
@@ -606,8 +606,8 @@ def heartbeat():
 # 添加自我喚醒功能
 def keep_alive():
     # 創建一個新的 script run context
-    ctx = script_run_context.get_script_run_ctx()
-    script_run_context.add_script_run_ctx(ctx)
+    ctx = get_script_run_ctx()
+    get_script_run_ctx().add_script_run_ctx(ctx)
     
     while True:
         try:
