@@ -11,5 +11,17 @@ jobs:
     steps:
       - name: Ping Streamlit App
         run: |
-          curl -sL https://translationagent.streamlit.app > /dev/null
-          echo "Pinged at $(date)" 
+          max_retries=3
+          retry_count=0
+          while [ $retry_count -lt $max_retries ]; do
+            if curl -sL -w "%{http_code}" "https://translationagent.streamlit.app" -o /dev/null | grep -q "200\|302"; then
+              echo "Successfully pinged at $(date)"
+              exit 0
+            else
+              echo "Ping failed, attempt $(($retry_count + 1)) of $max_retries"
+              retry_count=$(($retry_count + 1))
+              sleep 10
+            fi
+          done
+          echo "All retry attempts failed"
+          exit 1 
