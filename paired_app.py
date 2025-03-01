@@ -71,10 +71,11 @@ selected_model = st.sidebar.selectbox(
     index=list(model_options.keys()).index("o3-mini"),  # Set o3-mini as default
     help=(
         "Batch input/output cost per 1M tokens (USD):\n\n"
-        "gpt-4o: 2.50/10.00, **gpt-4o-mini: 0.15/0.60**\n"
-        "o1-mini: 1.10/4.40, **o3-mini: 1.10/4.40**\n\n"
+        "gpt-4o: 2.50/10.00, gpt-4o-mini: 0.15/0.60\n"
+        "o1-mini: 1.10/4.40, o3-mini: 1.10/4.40\n\n"
         "deepseek-chat: 0.015/0.06, deepseek-reasoner: 0.03/0.12\n\n"
-        "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing"
+        "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing\n\n"
+        "For DeepSeek model pricing details, visit: https://api-docs.deepseek.com/quick_start/pricing"
     )
 )
 
@@ -87,7 +88,7 @@ if MODEL_NAME.startswith("deepseek"):
         label="DeepSeek API Key:",
         type='password',
         placeholder="sk-...",
-        help="Get from DeepSeek platform"
+        help="Get from https://platform.deepseek.com/api_keys"
     )
     if deepseek_api_key:
         os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
