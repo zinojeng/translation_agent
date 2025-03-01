@@ -45,10 +45,10 @@ USD_TO_NTD_RATE = 30
 
 # Sidebar for model selection
 model_options = {
-    "gpt-4o-mini": {"input_cost": 0.075, "output_cost": 0.300, "model_name": "gpt-4o-mini"},
-    "gpt-4o": {"input_cost": 2.5, "output_cost": 7.5, "model_name": "gpt-4o"},
-    "o1-mini": {"input_cost": 0.0075, "output_cost": 0.03, "model_name": "o1-mini"},
-    "o3-mini": {"input_cost": 0.0075, "output_cost": 0.03, "model_name": "o3-mini"},
+    "gpt-4o-mini": {"input_cost": 0.15, "output_cost": 0.60, "model_name": "gpt-4o-mini"},
+    "gpt-4o": {"input_cost": 2.50, "output_cost": 10.00, "model_name": "gpt-4o"},
+    "o1-mini": {"input_cost": 1.10, "output_cost": 4.40, "model_name": "o1-mini"},
+    "o3-mini": {"input_cost": 1.10, "output_cost": 4.40, "model_name": "o3-mini"},
     "deepseek-chat": {
         "input_cost": 0.015, 
         "output_cost": 0.06,
@@ -71,10 +71,10 @@ selected_model = st.sidebar.selectbox(
     index=list(model_options.keys()).index("o3-mini"),  # Set o3-mini as default
     help=(
         "Batch input/output cost per 1M tokens (USD):\n"
-        "gpt-4o: 2.5/7.5\n"
-        "**gpt-4o-mini: 0.075/0.3**\n"
-        "o1-mini: 0.0075/0.03\n"
-        "**o3-mini: 0.0075/0.03**\n"
+        "gpt-4o: 2.50/10.00\n"
+        "**gpt-4o-mini: 0.15/0.60**\n"
+        "o1-mini: 1.10/4.40\n"
+        "**o3-mini: 1.10/4.40**\n"
         "deepseek-chat: 0.015/0.06\n"
         "deepseek-reasoner: 0.03/0.12\n\n"
         "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing"
