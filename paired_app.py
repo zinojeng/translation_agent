@@ -72,9 +72,9 @@ selected_model = st.sidebar.selectbox(
     help=(
         "Batch input/output cost per 1M tokens (USD):\n\n"
         "gpt-4o: 2.50/10.00\n"
-        "**gpt-4o-mini: 0.15/0.60**\n"
+        "**gpt-4o-mini: 0.15/0.60**\n\n"
         "o1-mini: 1.10/4.40\n"
-        "**o3-mini: 1.10/4.40**\n"
+        "**o3-mini: 1.10/4.40**\n\n"
         "deepseek-chat: 0.015/0.06\n"
         "deepseek-reasoner: 0.03/0.12\n\n"
         "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing"
