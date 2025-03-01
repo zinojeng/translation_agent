@@ -2,7 +2,7 @@ name: Keep Alive
 
 on:
   schedule:
-    - cron: '*/15 * * * *'  # 每15分鐘執行一次
+    - cron: '0 */12 * * *'  # 每12小時執行一次
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
