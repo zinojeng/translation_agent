@@ -71,9 +71,9 @@ selected_model = st.sidebar.selectbox(
     index=list(model_options.keys()).index("o3-mini"),  # Set o3-mini as default
     help=(
         "Batch input/output cost per 1M tokens (USD):\n"
-        "gpt-4o: 2.50/10.00 **gpt-4o-mini: 0.15/0.60**\n"
-        "o1-mini: 1.10/4.40 **o3-mini: 1.10/4.40**\n"
-        "deepseek-chat: 0.015/0.06 deepseek-reasoner: 0.03/0.12\n\n"
+        "gpt-4o: 2.50/10.00, gpt-4o-mini: 0.15/0.60\n"
+        "o1-mini: 1.10/4.40, o3-mini: 1.10/4.40\n"
+        "deepseek-chat: 0.015/0.06, deepseek-reasoner: 0.03/0.12\n"
         "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing"
     )
 )
