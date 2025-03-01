@@ -600,23 +600,57 @@ def main():
 # 添加心跳檢測路由
 @st.cache_data(ttl=60)
 def heartbeat():
-    return {"status": "alive", "timestamp": datetime.now().isoformat()}
+    return {
+        "status": "alive",
+        "timestamp": datetime.now().isoformat()
+    }
 
 # 添加自我喚醒功能
 def keep_alive():
-    # 創建一個新的 script run context
-    ctx = get_script_run_ctx()
-    get_script_run_ctx().add_script_run_ctx(ctx)
+    max_retries = 5
+    base_wait_time = 60  # 基礎等待時間（秒）
+    app_url = "https://translationagent.streamlit.app"
+    
+    def log_with_time(message: str) -> None:
+        current_time = datetime.now().isoformat()
+        print(f"{message} at {current_time}")
     
     while True:
         try:
-            response = requests.get("https://translationagent.streamlit.app")
-            if 'last_ping' in st.session_state:
-                st.session_state['last_ping'] = time.time()
-            time.sleep(86400)  # 每24小時喚醒一次
+            response = requests.get(app_url, timeout=30)
+            if response.status_code in [200, 302]:
+                log_with_time("Keep-alive successful")
+                if 'last_ping' in st.session_state:
+                    st.session_state['last_ping'] = time.time()
+                time.sleep(3600)  # 每小時喚醒一次
+            else:
+                status_code = response.status_code
+                raise requests.RequestException(
+                    f"Unexpected status code: {status_code}"
+                )
         except Exception as e:
-            print(f"Keep-alive error: {e}")
-            time.sleep(60)  # 如果出錯，1分鐘後重試
+            print(f"Keep-alive error: {str(e)}")
+            retry_count = 0
+            while retry_count < max_retries:
+                try:
+                    wait_time = base_wait_time * (2 ** retry_count)
+                    attempt = f"{retry_count + 1}/{max_retries}"
+                    print(f"Retrying in {wait_time}s (attempt {attempt})")
+                    time.sleep(wait_time)
+                    
+                    response = requests.get(app_url, timeout=30)
+                    if response.status_code in [200, 302]:
+                        log_with_time("Retry successful")
+                        break
+                    
+                except Exception as retry_error:
+                    print(f"Retry failed: {str(retry_error)}")
+                    
+                retry_count += 1
+            
+            if retry_count >= max_retries:
+                print("All retry attempts failed, waiting for next cycle")
+                time.sleep(3600)  # 等待一小時後重新開始
 
 # 在主程式開始時啟動自我喚醒線程
 if 'keep_alive_thread' not in st.session_state:
@@ -626,7 +660,8 @@ if 'keep_alive_thread' not in st.session_state:
 
 # 顯示最後喚醒時間（可選）
 if 'last_ping' in st.session_state:
-    st.sidebar.text(f"Last active: {time.ctime(st.session_state['last_ping'])}")
+    last_active = time.ctime(st.session_state['last_ping'])
+    st.sidebar.text(f"Last active: {last_active}")
 
 if __name__ == "__main__":
     # 使用 query_params 替代 experimental_get_query_params

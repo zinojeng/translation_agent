@@ -2,7 +2,7 @@ name: Keep Alive
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # 每30分鐘執行一次
+    - cron: '*/15 * * * *'  # 每15分鐘執行一次
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
@@ -11,17 +11,34 @@ jobs:
     steps:
       - name: Ping Streamlit App
         run: |
-          max_retries=3
+          max_retries=5
           retry_count=0
+          success=false
+          
           while [ $retry_count -lt $max_retries ]; do
-            if curl -sL -w "%{http_code}" "https://translationagent.streamlit.app" -o /dev/null | grep -q "200\|302"; then
-              echo "Successfully pinged at $(date)"
-              exit 0
+            echo "Attempt $(($retry_count + 1)) of $max_retries at $(date)"
+            
+            response=$(curl -sL -w "%{http_code}" "https://translationagent.streamlit.app" -o /dev/null || echo "000")
+            
+            if [[ "$response" =~ ^(200|302)$ ]]; then
+              echo "Successfully pinged with status code $response"
+              success=true
+              break
             else
-              echo "Ping failed, attempt $(($retry_count + 1)) of $max_retries"
+              echo "Ping failed with status code $response"
               retry_count=$(($retry_count + 1))
-              sleep 10
+              
+              if [ $retry_count -lt $max_retries ]; then
+                sleep_time=$((30 * $retry_count))  # 逐漸增加等待時間
+                echo "Waiting $sleep_time seconds before next attempt..."
+                sleep $sleep_time
+              fi
             fi
           done
-          echo "All retry attempts failed"
-          exit 1 
+          
+          if [ "$success" = true ]; then
+            exit 0
+          else
+            echo "All $max_retries attempts failed"
+            exit 1
+          fi 
