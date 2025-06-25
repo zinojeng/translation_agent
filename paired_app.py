@@ -77,11 +77,16 @@ selected_model = st.sidebar.selectbox(
         "deepseek-chat: 0.015/0.06, deepseek-reasoner: 0.03/0.12\n\n"
         "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing\n\n"
         "For DeepSeek model pricing details, visit: https://api-docs.deepseek.com/quick_start/pricing"
-    )
+    ),
+    key="model_selection"
 )
 
 # Set MODEL_NAME after selection
 MODEL_NAME = selected_model
+
+# Initialize API key variables
+openai_api_key = None
+deepseek_api_key = None
 
 # API key input based on selected model
 if MODEL_NAME.startswith("deepseek"):
@@ -89,23 +94,21 @@ if MODEL_NAME.startswith("deepseek"):
         label="DeepSeek API Key:",
         type='password',
         placeholder="sk-...",
-        help="Get from https://platform.deepseek.com/api_keys"
+        help="Get from https://platform.deepseek.com/api_keys",
+        key="deepseek_api_key"
     )
     if deepseek_api_key:
         os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
-    # Set openai_api_key to None for DeepSeek models to avoid undefined variable error
-    openai_api_key = None
 else:
     openai_api_key = st.sidebar.text_input(
         label="OpenAI API Key:",
         type='password',
         placeholder="sk-...",
-        help="Get from https://platform.openai.com/account/api-keys"
+        help="Get from https://platform.openai.com/account/api-keys",
+        key="openai_api_key"
     )
     if openai_api_key:
         os.environ["OPENAI_API_KEY"] = openai_api_key
-    # Set deepseek_api_key to None for OpenAI models to avoid undefined variable error
-    deepseek_api_key = None
 
 # Set costs after model selection
 INPUT_COST_PER_1K_TOKENS = model_options[MODEL_NAME]["input_cost"]
