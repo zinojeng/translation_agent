@@ -25,6 +25,7 @@ else:
 nltk.download('punkt', quiet=True)
 # Set page config
 st.set_page_config(page_title="Translation Agent", layout="wide")
+# Force redeploy
 
 #Add custom CSS to hide the GitHub icon
 hide_github_icon = """
