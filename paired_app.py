@@ -27,7 +27,7 @@ nltk.download('punkt', quiet=True)
 st.set_page_config(page_title="Translation Agent", layout="wide")
 # Force redeploy
 
-#Add custom CSS to hide the GitHub icon
+#Add custom CSS to hide the GitHub icon and improve mobile sidebar
 hide_github_icon = """
     <style>
     .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob, 
@@ -36,6 +36,36 @@ hide_github_icon = """
     #MainMenu{ visibility: hidden; } 
     footer { visibility: hidden; } 
     header { visibility: hidden; }
+    
+    /* Mobile sidebar improvements */
+    @media (max-width: 768px) {
+        .css-1d391kg { 
+            padding-top: 1rem; 
+        }
+        
+        /* Make sidebar toggle button more prominent */
+        .css-1rs6os { 
+            display: block !important;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+    }
+    
+    /* Sidebar toggle button styling */
+    .sidebar-toggle {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        background: #ff4b4b;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
     </style>
 """
 st.write(hide_github_icon, unsafe_allow_html=True)
@@ -134,6 +164,10 @@ st.sidebar.markdown("""
     
 # Language selection
 st.title("Translation Agent: Agentic translation using reflection workflow")
+
+# Mobile sidebar access reminder
+st.info("📱 手機用戶提醒：在手機上使用時，請點擊左上角的 '>' 圖標來打開側邊欄進行模型和 API 設定。如果側邊欄關閉了，您可以點擊螢幕左上角的箭頭來重新打開。")
+
 st.subheader("Select Languages")
 col1, col2, col3 = st.columns(3)
 
@@ -646,15 +680,36 @@ components.html(
     <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/0.1.0-beta.5/libs/oversea/index.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // CozeWebSDK initialization
             new CozeWebSDK.WebChatClient({
                 config: {
                     bot_id: '7408278430665752583',
                 },
                 componentProps: {
                     title: 'Gestational Diabetes Care',
-                    icon: 'https://www.icareweight.com/wp-content/uploads/2024/08/images-5-removebg-preview.png', // 新的 icon URL
+                    icon: 'https://www.icareweight.com/wp-content/uploads/2024/08/images-5-removebg-preview.png',
                 },
             });
+            
+            // Mobile sidebar toggle enhancement
+            function enhanceMobileSidebar() {
+                // Add a visible sidebar toggle button for mobile
+                const sidebarToggle = document.querySelector('[data-testid="collapsedControl"]');
+                if (sidebarToggle) {
+                    sidebarToggle.style.backgroundColor = '#ff4b4b';
+                    sidebarToggle.style.color = 'white';
+                    sidebarToggle.style.padding = '8px';
+                    sidebarToggle.style.borderRadius = '4px';
+                    sidebarToggle.style.position = 'fixed';
+                    sidebarToggle.style.top = '10px';
+                    sidebarToggle.style.left = '10px';
+                    sidebarToggle.style.zIndex = '1000';
+                    sidebarToggle.title = '點擊打開側邊欄設定';
+                }
+            }
+            
+            // Check periodically for sidebar toggle button
+            setInterval(enhanceMobileSidebar, 1000);
         });
     </script>
     """,
