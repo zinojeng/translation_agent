@@ -92,53 +92,64 @@ model_options = {
     }
 }
 
-# Sidebar configuration
-st.sidebar.title("Configuration")
+# Configuration function
+def show_configuration(container_type="sidebar"):
+    if container_type == "sidebar":
+        container = st.sidebar
+        container.title("Configuration")
+    else:
+        container = st
+        container.subheader("📋 模型和 API 設定")
+    
+    # Model selection with o3-mini as default
+    selected_model = container.selectbox(
+        "Select Translation Model:",
+        list(model_options.keys()),
+        index=list(model_options.keys()).index("o3-mini"),  # Set o3-mini as default
+        help=(
+            "Batch input/output cost per 1M tokens (USD):\n\n"
+            "gpt-4o: 2.50/10.00, gpt-4o-mini: 0.15/0.60\n"
+            "o1-mini: 1.10/4.40, o3-mini: 1.10/4.40\n\n"
+            "deepseek-chat: 0.015/0.06, deepseek-reasoner: 0.03/0.12\n\n"
+            "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing\n\n"
+            "For DeepSeek model pricing details, visit: https://api-docs.deepseek.com/quick_start/pricing"
+        ),
+        key=f"model_selection_{container_type}"
+    )
+    
+    # Initialize API key variables
+    openai_api_key = None
+    deepseek_api_key = None
+    
+    # API key input based on selected model
+    if selected_model.startswith("deepseek"):
+        deepseek_api_key = container.text_input(
+            label="DeepSeek API Key:",
+            type='password',
+            placeholder="sk-...",
+            help="Get from https://platform.deepseek.com/api_keys",
+            key=f"deepseek_api_key_{container_type}"
+        )
+        if deepseek_api_key:
+            os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
+    else:
+        openai_api_key = container.text_input(
+            label="OpenAI API Key:",
+            type='password',
+            placeholder="sk-...",
+            help="Get from https://platform.openai.com/account/api-keys",
+            key=f"openai_api_key_{container_type}"
+        )
+        if openai_api_key:
+            os.environ["OPENAI_API_KEY"] = openai_api_key
+    
+    return selected_model, openai_api_key, deepseek_api_key
 
-# Model selection with o3-mini as default
-selected_model = st.sidebar.selectbox(
-    "Select Translation Model:",
-    list(model_options.keys()),
-    index=list(model_options.keys()).index("o3-mini"),  # Set o3-mini as default
-    help=(
-        "Batch input/output cost per 1M tokens (USD):\n\n"
-        "gpt-4o: 2.50/10.00, gpt-4o-mini: 0.15/0.60\n"
-        "o1-mini: 1.10/4.40, o3-mini: 1.10/4.40\n\n"
-        "deepseek-chat: 0.015/0.06, deepseek-reasoner: 0.03/0.12\n\n"
-        "For OpenAI model pricing details, visit: https://platform.openai.com/docs/pricing\n\n"
-        "For DeepSeek model pricing details, visit: https://api-docs.deepseek.com/quick_start/pricing"
-    ),
-    key="model_selection"
-)
+# Show configuration in sidebar
+selected_model, openai_api_key, deepseek_api_key = show_configuration("sidebar")
 
 # Set MODEL_NAME after selection
 MODEL_NAME = selected_model
-
-# Initialize API key variables
-openai_api_key = None
-deepseek_api_key = None
-
-# API key input based on selected model
-if MODEL_NAME.startswith("deepseek"):
-    deepseek_api_key = st.sidebar.text_input(
-        label="DeepSeek API Key:",
-        type='password',
-        placeholder="sk-...",
-        help="Get from https://platform.deepseek.com/api_keys",
-        key="deepseek_api_key"
-    )
-    if deepseek_api_key:
-        os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
-else:
-    openai_api_key = st.sidebar.text_input(
-        label="OpenAI API Key:",
-        type='password',
-        placeholder="sk-...",
-        help="Get from https://platform.openai.com/account/api-keys",
-        key="openai_api_key"
-    )
-    if openai_api_key:
-        os.environ["OPENAI_API_KEY"] = openai_api_key
 
 # Set costs after model selection
 INPUT_COST_PER_1K_TOKENS = model_options[MODEL_NAME]["input_cost"]
@@ -165,8 +176,27 @@ st.sidebar.markdown("""
 # Language selection
 st.title("Translation Agent: Agentic translation using reflection workflow")
 
-# Mobile sidebar access reminder
-st.info("📱 手機用戶提醒：在手機上使用時，請點擊左上角的 '>' 圖標來打開側邊欄進行模型和 API 設定。如果側邊欄關閉了，您可以點擊螢幕左上角的箭頭來重新打開。")
+# Mobile sidebar access reminder and toggle button
+col_btn, col_info = st.columns([1, 4])
+
+with col_btn:
+    if st.button("📋 設定", key="sidebar_toggle", help="點擊打開側邊欄設定"):
+        st.session_state.show_sidebar_content = not st.session_state.get('show_sidebar_content', False)
+
+with col_info:
+    st.info("📱 手機用戶：點擊左側「📋 設定」按鈕來顯示模型和 API 設定選項。")
+
+# Show configuration in main area if toggled (for mobile users)
+if st.session_state.get('show_sidebar_content', False):
+    with st.expander("🔧 模型和 API 設定", expanded=True):
+        main_selected_model, main_openai_api_key, main_deepseek_api_key = show_configuration("main")
+        # Update global variables if main configuration is used
+        if main_selected_model:
+            MODEL_NAME = main_selected_model
+            if main_openai_api_key:
+                openai_api_key = main_openai_api_key
+            if main_deepseek_api_key:
+                deepseek_api_key = main_deepseek_api_key
 
 st.subheader("Select Languages")
 col1, col2, col3 = st.columns(3)
