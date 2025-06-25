@@ -92,6 +92,8 @@ if MODEL_NAME.startswith("deepseek"):
     )
     if deepseek_api_key:
         os.environ["DEEPSEEK_API_KEY"] = deepseek_api_key
+    # Set openai_api_key to None for DeepSeek models to avoid undefined variable error
+    openai_api_key = None
 else:
     openai_api_key = st.sidebar.text_input(
         label="OpenAI API Key:",
@@ -101,6 +103,8 @@ else:
     )
     if openai_api_key:
         os.environ["OPENAI_API_KEY"] = openai_api_key
+    # Set deepseek_api_key to None for OpenAI models to avoid undefined variable error
+    deepseek_api_key = None
 
 # Set costs after model selection
 INPUT_COST_PER_1K_TOKENS = model_options[MODEL_NAME]["input_cost"]
@@ -270,11 +274,8 @@ def read_doc_or_docx(file):
                 full_text.append(para.text)
             return '\n'.join(full_text)
         elif file_extension == 'doc':
-            # 将文件内容保存到临时的字节流中
-            bytes_io = io.BytesIO(file.getvalue())
-            # 使用 textract 读取 .doc 文件
-            text = textract.process(bytes_io, extension='doc').decode('utf-8')
-            return text
+            st.error("Legacy .doc files are not supported. Please convert to .docx format.")
+            return ""
         else:
             raise ValueError(f"Unsupported file format: {file_extension}")
     except Exception as e:
